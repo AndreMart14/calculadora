@@ -21,20 +21,7 @@ body::before {
   background: url('escudo-unicordoba.png') center/220px no-repeat;
   opacity: 0.07;
   filter: blur(3px);
-  z-index: -1;
-}
-
-/* Partículas de fondo */
-.particle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(0, 255, 150, 0.3);
-  pointer-events: none;
-  animation: flotar 8s linear infinite;
-}
-@keyframes flotar {
-  0% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+  z-index: 0;
 }
 
 /* ✨ Destellos */
@@ -46,7 +33,7 @@ body::before {
   border-radius: 50%;
   opacity: 0;
   pointer-events: none;
-  z-index: -2;
+  z-index: 1;
   animation: destello 2s ease-out forwards;
 }
 @keyframes destello {
@@ -55,36 +42,40 @@ body::before {
   100% { opacity: 0; transform: scale(2); }
 }
 
-/* METEORITOS */
+/* 🌠 Meteoritos */
 .meteor {
-  position: absolute;
-  width: 14px;
-  height: 14px;
+  position: fixed;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: radial-gradient(circle, #fff, #00ffaa);
-  box-shadow: 0 0 20px #00ffaa;
-  animation: moverMeteoro linear forwards;
+  background: radial-gradient(circle, #ffffff, #00ffaa);
+  box-shadow: 0 0 15px 5px rgba(0,255,150,0.6);
+  z-index: 5;
   cursor: pointer;
+  animation: meteorMove linear forwards;
 }
-@keyframes moverMeteoro {
-  from { transform: translate(0,0); opacity: 1; }
+@keyframes meteorMove {
+  from { transform: translate(0, 0) rotate(0deg); opacity: 1; }
   to { transform: translate(-120vw, 120vh) rotate(720deg); opacity: 0; }
 }
+
+/* 💥 Explosión */
 .explosion {
-  position: absolute;
+  position: fixed;
   width: 60px;
   height: 60px;
-  background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(0,255,200,0.3), transparent);
   border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(0,255,200,0.3), transparent);
   pointer-events: none;
-  animation: explotar 0.7s ease-out forwards;
+  animation: explotar 0.6s ease-out forwards;
+  z-index: 6;
 }
 @keyframes explotar {
-  from { transform: scale(0.2); opacity: 1; }
-  to { transform: scale(2); opacity: 0; }
+  0% { transform: scale(0.2); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
 }
 
-/* Calculadora */
+/* 🧮 Calculadora */
 .calculator-container {
   width: 100%;
   max-width: 420px;
@@ -94,19 +85,12 @@ body::before {
   backdrop-filter: blur(14px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   text-align: center;
-  transition: all 0.4s ease;
+  z-index: 10;
 }
-.calculator-container:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 25px rgba(0, 255, 150, 0.3);
-}
-
-/* Texto */
 h2 {
   font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 25px;
   color: #00ffb3;
+  margin-bottom: 20px;
   text-shadow: 0 0 8px #00ffb3, 0 0 18px rgba(0,255,179,0.4);
   animation: glow 2s ease-in-out infinite alternate;
 }
@@ -115,99 +99,87 @@ h2 {
   to { text-shadow: 0 0 20px #00ffaa, 0 0 40px rgba(0,255,179,0.6); }
 }
 
-/* Inputs */
-.input-group { margin-bottom: 20px; text-align: left; }
-label { display: block; font-size: 14px; margin-bottom: 6px; color: rgba(255,255,255,0.8); }
 input[type="number"] {
   width: 100%;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 10px;
   padding: 12px 15px;
   font-size: 16px;
   color: #fff;
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 input[type="number"]:focus {
-  border: 1px solid #00ffb3;
-  box-shadow: 0 0 10px rgba(0,255,150,0.4);
-  background: rgba(255,255,255,0.18);
+  border-color: #00ffb3;
+  box-shadow: 0 0 8px rgba(0,255,150,0.4);
 }
 
-/* Botones */
 .button-group {
   display: flex;
-  gap: 15px;
-  margin-top: 25px;
+  gap: 10px;
+  margin-top: 20px;
 }
 button {
   flex: 1;
-  padding: 12px;
   border: none;
   border-radius: 10px;
-  font-size: 16px;
+  padding: 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
-#calcularBtn { background-color: #00ffb3; color: #111; }
+#calcularBtn {
+  background: #00ffb3;
+  color: #111;
+}
 #calcularBtn:hover {
-  background-color: #00ffaa;
-  box-shadow: 0 0 15px #00ffaa;
-  transform: translateY(-3px);
+  background: #00ffaa;
+  box-shadow: 0 0 10px #00ffaa;
 }
 #limpiarBtn {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.5);
   color: #fff;
+  background: transparent;
 }
 #limpiarBtn:hover {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.1);
   box-shadow: 0 0 10px rgba(255,255,255,0.3);
-  transform: translateY(-3px);
 }
 
-/* Resultado */
-.result-display {
-  margin-top: 25px;
-  padding: 18px;
-  border-radius: 10px;
-  font-size: 16px;
-  min-height: 60px;
-  opacity: 0;
-  transition: all 0.5s ease;
-}
-.result-display.mostrar { opacity: 1; transform: scale(1.02); }
-
-/* Panel física */
+/* Panel ciencia */
 .info-panel {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(0, 255, 150, 0.1);
-  border: 1px solid rgba(0, 255, 150, 0.4);
-  backdrop-filter: blur(8px);
-  color: #00ffb3;
-  font-size: 14px;
-  padding: 12px 16px;
+  bottom: 15px;
+  right: 15px;
+  background: rgba(0,255,150,0.1);
+  border: 1px solid rgba(0,255,150,0.4);
+  padding: 10px 14px;
   border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,255,150,0.3);
-  cursor: pointer;
+  font-size: 14px;
   z-index: 999;
+  color: #00ffb3;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
 }
-.info-panel:hover { background: rgba(0, 255, 150, 0.25); transform: scale(1.05); }
+.info-panel span {
+  animation: parpadeo 2s infinite;
+}
+@keyframes parpadeo {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
 
-/* Contador meteoritos */
+/* 🧮 Contador de meteoritos */
 .meteor-counter {
   position: fixed;
-  top: 15px;
-  left: 15px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.3);
-  padding: 8px 12px;
-  border-radius: 8px;
-  backdrop-filter: blur(6px);
-  font-size: 14px;
+  top: 10px;
+  left: 10px;
+  font-size: 12px;
   color: #00ffb3;
-  z-index: 999;
+  background: rgba(255,255,255,0.05);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
 }
