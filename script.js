@@ -11,50 +11,111 @@ document.addEventListener('DOMContentLoaded', function () {
     { base: '#ffd700', glow: 'rgba(255,215,0,0.6)' }
   ];
 
-  // 🌠 Crear meteoritos o cometas
+  // ✨ FONDO DE ESTRELLAS
+  function iniciarCieloEstrellado() {
+    const canvas = document.getElementById('cieloEstrellado');
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    let estrellas = [];
+
+    function ajustarTamaño() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      estrellas = Array.from({ length: 200 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.5 + 0.2,
+        brillo: Math.random(),
+        velocidad: 0.005 + Math.random() * 0.01
+      }));
+    }
+
+    function dibujar() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#fff";
+      for (const e of estrellas) {
+        e.brillo += e.velocidad * (Math.random() < 0.5 ? -1 : 1);
+        if (e.brillo < 0) e.brillo = 0;
+        if (e.brillo > 1) e.brillo = 1;
+        ctx.globalAlpha = e.brillo;
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.r, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(dibujar);
+    }
+
+    window.addEventListener('resize', ajustarTamaño);
+    ajustarTamaño();
+    dibujar();
+  }
+  iniciarCieloEstrellado();
+
+  // 🌠 CREAR METEOROS / COMETAS
   function crearMeteoro() {
     const meteor = document.createElement('div');
     meteor.classList.add('meteor');
+    if (Math.random() < 0.15) meteor.classList.add('cometa');
 
-    // 15% serán cometas especiales
-    const esCometa = Math.random() < 0.15;
-    if (esCometa) meteor.classList.add('cometa');
-
+    // Generar color aleatorio
     const color = colores[Math.floor(Math.random() * colores.length)];
     meteor.style.background = `radial-gradient(circle, white, ${color.base})`;
     meteor.style.boxShadow = `0 0 20px 5px ${color.glow}`;
+    meteor.style.position = 'fixed';
+    meteor.style.pointerEvents = 'auto'; // permite hacer clic aunque esté sobre la calculadora
+    meteor.style.zIndex = 50; // por encima de todo lo visual
     document.body.appendChild(meteor);
 
-    // Puntos inicial y final aleatorios (fuera de pantalla)
-    const startX = Math.random() * window.innerWidth;
-    const startY = -50; // desde arriba
-    const endX = Math.random() * window.innerWidth;
-    const endY = window.innerHeight + 100; // hasta abajo
+    // Origen fuera de la pantalla (borde aleatorio)
+    const lados = ['top', 'right', 'bottom', 'left'];
+    const origen = lados[Math.floor(Math.random() * lados.length)];
+    let startX, startY, endX, endY;
 
-    // Pequeña variación lateral
-    const desviacionX = (Math.random() - 0.5) * 400;
+    switch (origen) {
+      case 'top':
+        startX = Math.random() * window.innerWidth;
+        startY = -50;
+        endX = Math.random() * window.innerWidth;
+        endY = window.innerHeight + 100;
+        break;
+      case 'bottom':
+        startX = Math.random() * window.innerWidth;
+        startY = window.innerHeight + 50;
+        endX = Math.random() * window.innerWidth;
+        endY = -100;
+        break;
+      case 'left':
+        startX = -50;
+        startY = Math.random() * window.innerHeight;
+        endX = window.innerWidth + 100;
+        endY = Math.random() * window.innerHeight;
+        break;
+      case 'right':
+        startX = window.innerWidth + 50;
+        startY = Math.random() * window.innerHeight;
+        endX = -100;
+        endY = Math.random() * window.innerHeight;
+        break;
+    }
 
-    const duracion = esCometa ? 11 + Math.random() * 3 : 8 + Math.random() * 2; // segundos
-    const startTime = performance.now();
-
-    const angulo = Math.atan2(endY - startY, (endX + desviacionX) - startX) * (180 / Math.PI);
+    // Configurar movimiento
+    const duracion = 8 + Math.random() * 4;
+    const angulo = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
     meteor.style.rotate = `${angulo}deg`;
 
-    // 🕐 Movimiento animado frame a frame (más estable que transition)
+    const t0 = performance.now();
     function animar(t) {
-      const progreso = (t - startTime) / (duracion * 1000);
-      if (progreso >= 1) {
-        meteor.remove();
-        return;
-      }
-      const x = startX + (endX + desviacionX - startX) * progreso;
+      const progreso = Math.min((t - t0) / (duracion * 1000), 1);
+      const x = startX + (endX - startX) * progreso;
       const y = startY + (endY - startY) * progreso;
       meteor.style.transform = `translate(${x}px, ${y}px) rotate(${angulo}deg)`;
-      requestAnimationFrame(animar);
+      if (progreso < 1) requestAnimationFrame(animar);
+      else meteor.remove();
     }
     requestAnimationFrame(animar);
 
-    // 💥 Click = explosión y contador
+    // 💥 Explosión + contador
     meteor.addEventListener('click', (e) => {
       const boom = document.createElement('div');
       boom.classList.add('explosion');
@@ -68,20 +129,9 @@ document.addEventListener('DOMContentLoaded', function () {
       successSound.play();
     });
 
-    // Eliminación de seguridad
+    // Seguridad por si no se elimina
     setTimeout(() => meteor.remove(), (duracion + 2) * 1000);
   }
 
-  // 🌌 Crear meteoritos frecuentes
-  setInterval(crearMeteoro, 1800); // más meteoritos, sin saturar
-
-  // 💫 Destellos de fondo
-  setInterval(() => {
-    const flash = document.createElement('div');
-    flash.classList.add('flash');
-    flash.style.left = `${Math.random() * 100}%`;
-    flash.style.top = `${Math.random() * 100}%`;
-    document.body.appendChild(flash);
-    setTimeout(() => flash.remove(), 2000);
-  }, 7000);
+  setInterval(crearMeteoro, 1800);
 });
