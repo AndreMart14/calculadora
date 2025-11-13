@@ -1,109 +1,133 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+  const inputCorte1 = document.getElementById('corte1');
+  const inputCorte2 = document.getElementById('corte2');
+  const calcularBoton = document.getElementById('calcularBtn');
+  const resultadoDiv = document.getElementById('resultado');
+  const errorCorte1 = document.getElementById('error-corte1');
+  const errorCorte2 = document.getElementById('error-corte2');
+  const limpiarBoton = document.getElementById('limpiarBtn');
+  let errorTimeout;
 
-    // 1. Obtener referencias a los elementos HTML
-    const inputCorte1 = document.getElementById('corte1');
-    const inputCorte2 = document.getElementById('corte2');
-    const calcularBoton = document.getElementById('calcularBtn');
-    const resultadoDiv = document.getElementById('resultado');
-    const errorCorte1 = document.getElementById('error-corte1');
-    const errorCorte2 = document.getElementById('error-corte2');
-    const limpiarBoton = document.getElementById('limpiarBtn');
-    
-    let errorTimeout;
+  // 🔊 Sonidos
+  const clickSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_d32b9a2c35.mp3?filename=click-124467.mp3');
+  const successSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_450a87a3c4.mp3?filename=success-1-6297.mp3');
+  const errorSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_8e46b57a35.mp3?filename=error-126627.mp3');
 
-    // Función para mostrar un mensaje de error temporal
-    const mostrarErrorTemporal = (elemento, mensaje) => {
-        clearTimeout(errorTimeout);
-        elemento.textContent = mensaje;
-        errorTimeout = setTimeout(() => {
-            elemento.textContent = '';
-        }, 2000);
-    };
+  // 🌟 Generar partículas flotantes
+  for (let i = 0; i < 20; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    document.body.appendChild(particle);
+    resetParticle(particle);
+  }
+  function resetParticle(p) {
+    const size = Math.random() * 6 + 2;
+    p.style.width = `${size}px`;
+    p.style.height = `${size}px`;
+    p.style.left = `${Math.random() * 100}%`;
+    p.style.bottom = '-10px';
+    p.style.animationDuration = `${5 + Math.random() * 5}s`;
+    setTimeout(() => resetParticle(p), Math.random() * 9000 + 5000);
+  }
 
-    // Filtro de entrada de teclado
-    const filtrarCaracteres = (event) => {
-        const teclaPresionada = event.key;
-        const valorActual = event.target.value;
-        const elementoError = event.target.id === 'corte1' ? errorCorte1 : errorCorte2;
+  const mostrarErrorTemporal = (elemento, mensaje) => {
+    clearTimeout(errorTimeout);
+    elemento.textContent = mensaje;
+    errorTimeout = setTimeout(() => { elemento.textContent = ''; }, 2000);
+    errorSound.play();
+  };
 
-        elementoError.textContent = '';
-        clearTimeout(errorTimeout);
+  const filtrarCaracteres = (event) => {
+    const teclaPresionada = event.key;
+    const valorActual = event.target.value;
+    const elementoError = event.target.id === 'corte1' ? errorCorte1 : errorCorte2;
 
-        const teclasPermitidas = [
-            'Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'Home', 'End'
-        ];
+    elementoError.textContent = '';
+    clearTimeout(errorTimeout);
 
-        if (teclasPermitidas.includes(teclaPresionada)) {
-            return;
-        }
+    const teclasPermitidas = ['Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
 
-        if (teclaPresionada === '.' && valorActual.includes('.')) {
-            event.preventDefault();
-            mostrarErrorTemporal(elementoError, 'Solo se permite un punto decimal.');
-            return;
-        }
+    if (teclasPermitidas.includes(teclaPresionada)) return;
 
-        if (!/^[0-9.]$/.test(teclaPresionada)) {
-            event.preventDefault();
-            mostrarErrorTemporal(elementoError, 'Solo se permiten números y un punto.');
-        }
-    };
-
-    inputCorte1.addEventListener('keydown', filtrarCaracteres);
-    inputCorte2.addEventListener('keydown', filtrarCaracteres);
-
-    // Lógica del botón de Calcular
-    calcularBoton.addEventListener('click', function() {
-        if (inputCorte1.value === '') inputCorte1.value = '0.0';
-        if (inputCorte2.value === '') inputCorte2.value = '0.0';
-
-        const nota1 = parseFloat(inputCorte1.value);
-        const nota2 = parseFloat(inputCorte2.value);
-        
-        if (isNaN(nota1) || isNaN(nota2)) {
-            mostrarError("Por favor, ingresa solo números válidos.");
-            return;
-        }
-        
-        if (nota1 < 0 || nota1 > 5 || nota2 < 0 || nota2 > 5) {
-            mostrarError("Las calificaciones deben estar entre 0.0 y 5.0.");
-            return;
-        }
-
-        const notaNecesaria = (3.0 - (nota1 * 0.33) - (nota2 * 0.33)) / 0.34;
-        mostrarResultado(notaNecesaria);
-    });
-
-    // Funcionalidad del botón Limpiar
-    limpiarBoton.addEventListener('click', function() {
-        inputCorte1.value = '';
-        inputCorte2.value = '';
-        resultadoDiv.innerHTML = '';
-        resultadoDiv.style.backgroundColor = 'transparent';
-        resultadoDiv.style.border = 'none';
-        errorCorte1.textContent = '';
-        errorCorte2.textContent = '';
-        inputCorte1.focus();
-    });
-
-    // Funciones para mostrar resultado y error de cálculo
-    function mostrarResultado(nota) {
-        resultadoDiv.style.background = 'rgba(40, 167, 69, 0.2)';
-        resultadoDiv.style.border = '1px solid rgba(40, 167, 69, 0.5)';
-        resultadoDiv.style.color = '#fff';
-        const notaRedondeada = nota.toFixed(2);
-        if (nota > 5.0) {
-            resultadoDiv.innerHTML = `Necesitas sacar <b>${notaRedondeada}</b>.<br>Lamentablemente, ya no es posible alcanzar el 3.0. 😞`;
-        } else if (nota <= 0) {
-            resultadoDiv.innerHTML = `Necesitas sacar <b>0.0</b> o menos.<br>¡Felicitaciones, ya aprobaste la materia! 🎉`;
-        } else {
-            resultadoDiv.innerHTML = `Para obtener una nota final de <b>3.0</b>, necesitas sacar un <b>${notaRedondeada}</b> en el último corte.`;
-        }
+    if (teclaPresionada === '.' && valorActual.includes('.')) {
+      event.preventDefault();
+      mostrarErrorTemporal(elementoError, 'Solo se permite un punto decimal.');
+      return;
     }
-    function mostrarError(mensaje) {
-        resultadoDiv.style.background = 'rgba(220, 53, 69, 0.2)';
-        resultadoDiv.style.border = '1px solid rgba(220, 53, 69, 0.5)';
-        resultadoDiv.style.color = '#ffcdd2';
-        resultadoDiv.innerHTML = mensaje;
+    if (!/^[0-9.]$/.test(teclaPresionada)) {
+      event.preventDefault();
+      mostrarErrorTemporal(elementoError, 'Solo se permiten números y un punto.');
     }
+  };
+
+  inputCorte1.addEventListener('keydown', filtrarCaracteres);
+  inputCorte2.addEventListener('keydown', filtrarCaracteres);
+
+  calcularBoton.addEventListener('click', function () {
+    clickSound.play();
+    if (inputCorte1.value === '') inputCorte1.value = '0.0';
+    if (inputCorte2.value === '') inputCorte2.value = '0.0';
+
+    const nota1 = parseFloat(inputCorte1.value);
+    const nota2 = parseFloat(inputCorte2.value);
+
+    if (isNaN(nota1) || isNaN(nota2)) {
+      mostrarError("Por favor, ingresa solo números válidos.");
+      return;
+    }
+    if (nota1 < 0 || nota1 > 5 || nota2 < 0 || nota2 > 5) {
+      mostrarError("Las calificaciones deben estar entre 0.0 y 5.0.");
+      return;
+    }
+
+    const notaNecesaria = (3.0 - (nota1 * 0.33) - (nota2 * 0.33)) / 0.34;
+    mostrarResultado(notaNecesaria);
+  });
+
+  limpiarBoton.addEventListener('click', function () {
+    clickSound.play();
+    inputCorte1.value = '';
+    inputCorte2.value = '';
+    resultadoDiv.innerHTML = '';
+    resultadoDiv.style.backgroundColor = 'transparent';
+    resultadoDiv.style.border = 'none';
+    resultadoDiv.classList.remove('mostrar', 'success');
+    inputCorte1.focus();
+  });
+
+  function mostrarResultado(nota) {
+    resultadoDiv.classList.add('mostrar');
+    setTimeout(() => resultadoDiv.classList.remove('mostrar'), 1800);
+
+    const notaRedondeada = nota.toFixed(2);
+    if (nota > 5.0) {
+      resultadoDiv.innerHTML = `Necesitas sacar <b>${notaRedondeada}</b>.<br>Lamentablemente, ya no es posible alcanzar el 3.0. 😞`;
+      resultadoDiv.style.background = 'rgba(220, 53, 69, 0.2)';
+      resultadoDiv.style.border = '1px solid rgba(220, 53, 69, 0.5)';
+      resultadoDiv.style.color = '#ffcdd2';
+      errorSound.play();
+    } else if (nota <= 0) {
+      resultadoDiv.innerHTML = `¡Felicitaciones! Ya aprobaste 🎉<br>No necesitas más nota.`;
+      resultadoDiv.style.background = 'rgba(40, 167, 69, 0.2)';
+      resultadoDiv.style.border = '1px solid rgba(40, 167, 69, 0.5)';
+      resultadoDiv.style.color = '#fff';
+      resultadoDiv.classList.add('success');
+      successSound.play();
+    } else {
+      resultadoDiv.innerHTML = `Para obtener 3.0, necesitas <b>${notaRedondeada}</b> en el último corte.`;
+      resultadoDiv.style.background = 'rgba(0,255,150,0.15)';
+      resultadoDiv.style.border = '1px solid rgba(0,255,150,0.5)';
+      resultadoDiv.style.color = '#d9fff0';
+      successSound.play();
+    }
+  }
+
+  function mostrarError(mensaje) {
+    resultadoDiv.style.background = 'rgba(220, 53, 69, 0.2)';
+    resultadoDiv.style.border = '1px solid rgba(220, 53, 69, 0.5)';
+    resultadoDiv.style.color = '#ffcdd2';
+    resultadoDiv.innerHTML = mensaje;
+    resultadoDiv.classList.add('mostrar');
+    errorSound.play();
+  }
 });
