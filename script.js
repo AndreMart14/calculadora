@@ -3,11 +3,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const calcularBtn = document.getElementById('calcularBtn');
   const limpiarBtn = document.getElementById('limpiarBtn');
   const resultado = document.getElementById('resultado');
+  const panelCiencia = document.getElementById('panelCiencia');
+  const estadoCiencia = document.getElementById('estadoCiencia');
   let contador = 0;
 
   const successSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_450a87a3c4.mp3?filename=success-1-6297.mp3');
 
-  // 🌟 FONDO DE ESTRELLAS
+  // 🌌 FONDO DE ESTRELLAS
   function iniciarCieloEstrellado() {
     const canvas = document.getElementById('cieloEstrellado');
     if (!canvas) return;
@@ -105,7 +107,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     setTimeout(() => meteor.remove(), (dur + 2) * 1000);
   }
-
   setInterval(crearMeteoro, 1800);
 
   // 🧮 CALCULADORA DE NOTAS
@@ -136,4 +137,25 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('corte2').value = "";
     resultado.innerHTML = "";
   });
+
+  // 🔬 PANEL DE FÍSICA CUÁNTICA
+  const frasesCiencia = [
+    "Aún no... 😅",
+    "Estamos trabajando en ello 🧠",
+    "Los físicos siguen intentándolo ⚛️",
+    "Todavía falta unir la gravedad cuántica 🌌",
+    "No, pero cada día estamos más cerca 🚀"
+  ];
+
+  let indiceCiencia = 0;
+  function cambiarFrase() {
+    indiceCiencia = (indiceCiencia + 1) % frasesCiencia.length;
+    estadoCiencia.textContent = frasesCiencia[indiceCiencia];
+  }
+
+  // Cambia automáticamente cada 6 segundos
+  setInterval(cambiarFrase, 6000);
+
+  // Al hacer clic, cambia inmediatamente
+  panelCiencia.addEventListener('click', cambiarFrase);
 });
