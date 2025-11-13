@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const successSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_450a87a3c4.mp3?filename=success-1-6297.mp3');
   const errorSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_8e46b57a35.mp3?filename=error-126627.mp3');
 
-  // 🌟 Generar partículas flotantes
-  for (let i = 0; i < 20; i++) {
+  // 🌟 Generar partículas
+  for (let i = 0; i < 25; i++) {
     const particle = document.createElement('div');
     particle.classList.add('particle');
     document.body.appendChild(particle);
@@ -27,9 +27,21 @@ document.addEventListener('DOMContentLoaded', function () {
     p.style.left = `${Math.random() * 100}%`;
     p.style.bottom = '-10px';
     p.style.animationDuration = `${5 + Math.random() * 5}s`;
-    setTimeout(() => resetParticle(p), Math.random() * 9000 + 5000);
+    setTimeout(() => resetParticle(p), Math.random() * 8000 + 5000);
   }
 
+  // 💥 Destellos aleatorios en el fondo
+  function crearDestello() {
+    const flash = document.createElement('div');
+    flash.classList.add('flash');
+    flash.style.left = `${Math.random() * 100}%`;
+    flash.style.top = `${Math.random() * 100}%`;
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 2000);
+  }
+  setInterval(crearDestello, 7000);
+
+  // 💬 Errores
   const mostrarErrorTemporal = (elemento, mensaje) => {
     clearTimeout(errorTimeout);
     elemento.textContent = mensaje;
@@ -46,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
     clearTimeout(errorTimeout);
 
     const teclasPermitidas = ['Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
-
     if (teclasPermitidas.includes(teclaPresionada)) return;
 
     if (teclaPresionada === '.' && valorActual.includes('.')) {
@@ -91,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
     resultadoDiv.innerHTML = '';
     resultadoDiv.style.backgroundColor = 'transparent';
     resultadoDiv.style.border = 'none';
-    resultadoDiv.classList.remove('mostrar', 'success');
+    resultadoDiv.classList.remove('mostrar');
     inputCorte1.focus();
   });
 
@@ -101,17 +112,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const notaRedondeada = nota.toFixed(2);
     if (nota > 5.0) {
-      resultadoDiv.innerHTML = `Necesitas sacar <b>${notaRedondeada}</b>.<br>Lamentablemente, ya no es posible alcanzar el 3.0. 😞`;
+      resultadoDiv.innerHTML = `Necesitas <b>${notaRedondeada}</b>.<br>Ya no es posible alcanzar 3.0 😞`;
       resultadoDiv.style.background = 'rgba(220, 53, 69, 0.2)';
       resultadoDiv.style.border = '1px solid rgba(220, 53, 69, 0.5)';
       resultadoDiv.style.color = '#ffcdd2';
       errorSound.play();
     } else if (nota <= 0) {
-      resultadoDiv.innerHTML = `¡Felicitaciones! Ya aprobaste 🎉<br>No necesitas más nota.`;
+      resultadoDiv.innerHTML = `🎉 ¡Felicitaciones! Ya aprobaste.`;
       resultadoDiv.style.background = 'rgba(40, 167, 69, 0.2)';
       resultadoDiv.style.border = '1px solid rgba(40, 167, 69, 0.5)';
       resultadoDiv.style.color = '#fff';
-      resultadoDiv.classList.add('success');
       successSound.play();
     } else {
       resultadoDiv.innerHTML = `Para obtener 3.0, necesitas <b>${notaRedondeada}</b> en el último corte.`;
@@ -130,4 +140,25 @@ document.addEventListener('DOMContentLoaded', function () {
     resultadoDiv.classList.add('mostrar');
     errorSound.play();
   }
+
+  // 🧠 Panel sobre física cuántica
+  const panel = document.getElementById('panelCiencia');
+  const estado = document.getElementById('estadoCiencia');
+  const frases = [
+    'Todavía no... pero los físicos siguen intentando ⚛️',
+    'Aún no 😅 — ¡la gravedad cuántica es difícil!',
+    'No todavía, pero el CERN y la NASA están trabajando en ello 🌌',
+    'Quizás pronto... 👩‍🔬',
+    'Sigue siendo un misterio del universo 🌀'
+  ];
+  let idx = 0;
+  panel.addEventListener('click', () => {
+    idx = (idx + 1) % frases.length;
+    estado.textContent = frases[idx];
+    panel.style.color = idx % 2 === 0 ? '#00ffb3' : '#ffff80';
+  });
+  setInterval(() => {
+    idx = (idx + 1) % frases.length;
+    estado.textContent = frases[idx];
+  }, 10000);
 });
