@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
   const meteoroCount = document.getElementById('meteoroCount');
+  const calcularBtn = document.getElementById('calcularBtn');
+  const limpiarBtn = document.getElementById('limpiarBtn');
+  const resultado = document.getElementById('resultado');
   let contador = 0;
+
   const successSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_450a87a3c4.mp3?filename=success-1-6297.mp3');
 
   // 🌟 FONDO DE ESTRELLAS
@@ -43,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   iniciarCieloEstrellado();
 
-  // 🌠 Meteoritos
+  // ☄️ METEORITOS
   const colores = [
     { base: '#00ffaa', glow: 'rgba(0,255,150,0.6)' },
     { base: '#00bfff', glow: 'rgba(0,191,255,0.6)' },
@@ -103,4 +107,33 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   setInterval(crearMeteoro, 1800);
+
+  // 🧮 CALCULADORA DE NOTAS
+  calcularBtn.addEventListener('click', () => {
+    const c1 = parseFloat(document.getElementById('corte1').value);
+    const c2 = parseFloat(document.getElementById('corte2').value);
+
+    if (isNaN(c1) || isNaN(c2)) {
+      resultado.innerHTML = "⚠️ Por favor, ingresa ambos valores.";
+      return;
+    }
+
+    const notaFinal = (c1 * 0.33) + (c2 * 0.33);
+    const restante = 3.0 - notaFinal;
+    const corte3Necesario = restante / 0.34;
+
+    if (corte3Necesario <= 0) {
+      resultado.innerHTML = `✅ ¡Ya tienes nota suficiente para aprobar!<br>Tu nota final estimada sería: <b>${(notaFinal + 1.0).toFixed(2)}</b>`;
+    } else if (corte3Necesario > 5) {
+      resultado.innerHTML = `❌ Necesitarías más de 5.0 en el último corte para aprobar.<br>No es posible aprobar.`;
+    } else {
+      resultado.innerHTML = `📘 Necesitas <b>${corte3Necesario.toFixed(2)}</b> en el tercer corte para aprobar (3.0).`;
+    }
+  });
+
+  limpiarBtn.addEventListener('click', () => {
+    document.getElementById('corte1').value = "";
+    document.getElementById('corte2').value = "";
+    resultado.innerHTML = "";
+  });
 });
