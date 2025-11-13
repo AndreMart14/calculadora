@@ -1,28 +1,51 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const inputCorte1 = document.getElementById('corte1');
-  const inputCorte2 = document.getElementById('corte2');
-  const calcularBoton = document.getElementById('calcularBtn');
-  const resultadoDiv = document.getElementById('resultado');
-  const errorCorte1 = document.getElementById('error-corte1');
-  const errorCorte2 = document.getElementById('error-corte2');
-  const limpiarBoton = document.getElementById('limpiarBtn');
   const meteoroCount = document.getElementById('meteoroCount');
   let contador = 0;
 
-  // 🔊 Sonidos
-  const clickSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_d32b9a2c35.mp3?filename=click-124467.mp3');
   const successSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_450a87a3c4.mp3?filename=success-1-6297.mp3');
 
-  // 🌠 Generar meteoros aleatorios
+  const colores = [
+    { base: '#00ffaa', glow: 'rgba(0,255,150,0.6)' },
+    { base: '#00bfff', glow: 'rgba(0,191,255,0.6)' },
+    { base: '#ff66ff', glow: 'rgba(255,102,255,0.6)' },
+    { base: '#ffd700', glow: 'rgba(255,215,0,0.6)' }
+  ];
+
+  // 🌠 Crear meteoritos o cometas
   function crearMeteoro() {
     const meteor = document.createElement('div');
     meteor.classList.add('meteor');
-    meteor.style.left = `${100 + Math.random() * 20}vw`;
-    meteor.style.top = `${-10 - Math.random() * 20}vh`;
-    meteor.style.animationDuration = `${3 + Math.random() * 2}s`;
+
+    // 15% serán cometas especiales
+    const esCometa = Math.random() < 0.15;
+    if (esCometa) meteor.classList.add('cometa');
+
+    const color = colores[Math.floor(Math.random() * colores.length)];
+    meteor.style.background = `radial-gradient(circle, white, ${color.base})`;
+    meteor.style.boxShadow = `0 0 20px 5px ${color.glow}`;
     document.body.appendChild(meteor);
 
-    // Click = explosión y contador
+    const startX = Math.random() * window.innerWidth;
+    const startY = Math.random() * window.innerHeight;
+    const endX = Math.random() * window.innerWidth;
+    const endY = Math.random() * window.innerHeight;
+
+    const dx = endX - startX;
+    const dy = endY - startY;
+    const duracion = esCometa ? 9 + Math.random() * 3 : 6 + Math.random() * 3;
+
+    meteor.style.left = `${startX}px`;
+    meteor.style.top = `${startY}px`;
+    meteor.style.transition = `transform ${duracion}s linear, opacity 1s`;
+
+    const angulo = Math.atan2(dy, dx) * (180 / Math.PI);
+    meteor.style.rotate = `${angulo}deg`;
+
+    requestAnimationFrame(() => {
+      meteor.style.transform = `translate(${dx}px, ${dy}px) rotate(${angulo + 720}deg)`;
+      meteor.style.opacity = '0';
+    });
+
     meteor.addEventListener('click', (e) => {
       const boom = document.createElement('div');
       boom.classList.add('explosion');
@@ -30,16 +53,17 @@ document.addEventListener('DOMContentLoaded', function () {
       boom.style.top = `${e.clientY - 30}px`;
       document.body.appendChild(boom);
       meteor.remove();
-      setTimeout(() => boom.remove(), 600);
+      setTimeout(() => boom.remove(), 700);
       contador++;
       meteoroCount.textContent = contador;
       successSound.play();
     });
 
-    // Eliminar si sale de pantalla
-    setTimeout(() => meteor.remove(), 5000);
+    setTimeout(() => meteor.remove(), duracion * 1000 + 2000);
   }
-  setInterval(crearMeteoro, 5000);
+
+  // 🌌 Frecuencia
+  setInterval(crearMeteoro, 2200);
 
   // 💫 Destellos suaves
   setInterval(() => {
@@ -50,42 +74,4 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.appendChild(flash);
     setTimeout(() => flash.remove(), 2000);
   }, 7000);
-
-  // 🧮 Calculadora básica
-  const mostrarError = (m) => { resultadoDiv.textContent = m; };
-  calcularBoton.addEventListener('click', () => {
-    clickSound.play();
-    const n1 = parseFloat(inputCorte1.value || 0);
-    const n2 = parseFloat(inputCorte2.value || 0);
-    const nota = (3 - (n1 * 0.33) - (n2 * 0.33)) / 0.34;
-    resultadoDiv.classList.add('mostrar');
-    resultadoDiv.textContent = nota > 5 ? "Ya no es posible alcanzar 3.0" :
-      nota <= 0 ? "🎉 ¡Ya aprobaste!" :
-      `Necesitas ${nota.toFixed(2)} en el último corte.`;
-    successSound.play();
-  });
-  limpiarBoton.addEventListener('click', () => {
-    inputCorte1.value = inputCorte2.value = '';
-    resultadoDiv.textContent = '';
-  });
-
-  // 🔬 Panel de física cuántica
-  const panel = document.getElementById('panelCiencia');
-  const estado = document.getElementById('estadoCiencia');
-  const frases = [
-    'Todavía no... los físicos siguen intentándolo ⚛️',
-    'Aún no 😅 — ¡la gravedad cuántica es difícil!',
-    'No todavía, pero el CERN y la NASA trabajan 🌌',
-    'Quizás pronto... 👩‍🔬',
-    'Sigue siendo un misterio del universo 🌀'
-  ];
-  let idx = 0;
-  panel.addEventListener('click', () => {
-    idx = (idx + 1) % frases.length;
-    estado.textContent = frases[idx];
-  });
-  setInterval(() => {
-    idx = (idx + 1) % frases.length;
-    estado.textContent = frases[idx];
-  }, 10000);
 });
