@@ -25,27 +25,36 @@ document.addEventListener('DOMContentLoaded', function () {
     meteor.style.boxShadow = `0 0 20px 5px ${color.glow}`;
     document.body.appendChild(meteor);
 
+    // Puntos inicial y final aleatorios (fuera de pantalla)
     const startX = Math.random() * window.innerWidth;
-    const startY = Math.random() * window.innerHeight;
+    const startY = -50; // desde arriba
     const endX = Math.random() * window.innerWidth;
-    const endY = Math.random() * window.innerHeight;
+    const endY = window.innerHeight + 100; // hasta abajo
 
-    const dx = endX - startX;
-    const dy = endY - startY;
-    const duracion = esCometa ? 9 + Math.random() * 3 : 6 + Math.random() * 3;
+    // Pequeña variación lateral
+    const desviacionX = (Math.random() - 0.5) * 400;
 
-    meteor.style.left = `${startX}px`;
-    meteor.style.top = `${startY}px`;
-    meteor.style.transition = `transform ${duracion}s linear, opacity 1s`;
+    const duracion = esCometa ? 11 + Math.random() * 3 : 8 + Math.random() * 2; // segundos
+    const startTime = performance.now();
 
-    const angulo = Math.atan2(dy, dx) * (180 / Math.PI);
+    const angulo = Math.atan2(endY - startY, (endX + desviacionX) - startX) * (180 / Math.PI);
     meteor.style.rotate = `${angulo}deg`;
 
-    requestAnimationFrame(() => {
-      meteor.style.transform = `translate(${dx}px, ${dy}px) rotate(${angulo + 720}deg)`;
-      meteor.style.opacity = '0';
-    });
+    // 🕐 Movimiento animado frame a frame (más estable que transition)
+    function animar(t) {
+      const progreso = (t - startTime) / (duracion * 1000);
+      if (progreso >= 1) {
+        meteor.remove();
+        return;
+      }
+      const x = startX + (endX + desviacionX - startX) * progreso;
+      const y = startY + (endY - startY) * progreso;
+      meteor.style.transform = `translate(${x}px, ${y}px) rotate(${angulo}deg)`;
+      requestAnimationFrame(animar);
+    }
+    requestAnimationFrame(animar);
 
+    // 💥 Click = explosión y contador
     meteor.addEventListener('click', (e) => {
       const boom = document.createElement('div');
       boom.classList.add('explosion');
@@ -59,13 +68,14 @@ document.addEventListener('DOMContentLoaded', function () {
       successSound.play();
     });
 
-    setTimeout(() => meteor.remove(), duracion * 1000 + 2000);
+    // Eliminación de seguridad
+    setTimeout(() => meteor.remove(), (duracion + 2) * 1000);
   }
 
-  // 🌌 Frecuencia
-  setInterval(crearMeteoro, 2200);
+  // 🌌 Crear meteoritos frecuentes
+  setInterval(crearMeteoro, 1800); // más meteoritos, sin saturar
 
-  // 💫 Destellos suaves
+  // 💫 Destellos de fondo
   setInterval(() => {
     const flash = document.createElement('div');
     flash.classList.add('flash');
