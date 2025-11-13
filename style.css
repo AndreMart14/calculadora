@@ -1,184 +1,76 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+document.addEventListener('DOMContentLoaded', function () {
+  const meteoroCount = document.getElementById('meteoroCount');
+  let contador = 0;
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+  const successSound = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_450a87a3c4.mp3?filename=success-1-6297.mp3');
 
-body {
-  font-family: 'Poppins', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  overflow: hidden;
-  color: #fff;
-  background: radial-gradient(circle at center, #0a0a0a, #141414, #1f1f1f);
-  position: relative;
-}
+  // 🎨 Colores posibles
+  const colores = [
+    { base: '#00ffaa', glow: 'rgba(0,255,150,0.6)' },
+    { base: '#00bfff', glow: 'rgba(0,191,255,0.6)' },
+    { base: '#ff66ff', glow: 'rgba(255,102,255,0.6)' },
+    { base: '#ffd700', glow: 'rgba(255,215,0,0.6)' }
+  ];
 
-body::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url('escudo-unicordoba.png') center/220px no-repeat;
-  opacity: 0.07;
-  filter: blur(3px);
-  z-index: 0;
-}
+  // 🌠 Crear meteoritos con trayectorias aleatorias
+  function crearMeteoro() {
+    const meteor = document.createElement('div');
+    meteor.classList.add('meteor');
+    const color = colores[Math.floor(Math.random() * colores.length)];
+    meteor.style.background = `radial-gradient(circle, white, ${color.base})`;
+    meteor.style.boxShadow = `0 0 20px 5px ${color.glow}`;
+    document.body.appendChild(meteor);
 
-/* ✨ Destellos */
-.flash {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  background: radial-gradient(circle, rgba(255,255,255,0.9), transparent 70%);
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 1;
-  animation: destello 2s ease-out forwards;
-}
-@keyframes destello {
-  0% { opacity: 0; transform: scale(0.2); }
-  50% { opacity: 0.6; transform: scale(1.3); }
-  100% { opacity: 0; transform: scale(2); }
-}
+    // Posiciones inicial y final aleatorias
+    const startX = Math.random() * window.innerWidth;
+    const startY = Math.random() * window.innerHeight;
+    const endX = Math.random() * window.innerWidth;
+    const endY = Math.random() * window.innerHeight;
 
-/* 🌠 Meteoritos */
-.meteor {
-  position: fixed;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  box-shadow: 0 0 25px 8px rgba(255,255,255,0.6);
-  z-index: 5;
-  cursor: pointer;
-  animation: meteorMove linear forwards;
-}
-@keyframes meteorMove {
-  from { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-  to { transform: translate(-130vw, 130vh) rotate(720deg); opacity: 0; }
-}
+    const dx = endX - startX;
+    const dy = endY - startY;
+    const duracion = 6 + Math.random() * 3;
 
-/* 💥 Explosión */
-.explosion {
-  position: fixed;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(0,255,200,0.3), transparent);
-  pointer-events: none;
-  animation: explotar 0.7s ease-out forwards;
-  z-index: 6;
-}
-@keyframes explotar {
-  0% { transform: scale(0.2); opacity: 1; }
-  100% { transform: scale(2); opacity: 0; }
-}
+    meteor.style.left = `${startX}px`;
+    meteor.style.top = `${startY}px`;
+    meteor.style.transition = `transform ${duracion}s linear, opacity 1s`;
+    meteor.style.transform = `translate(${dx}px, ${dy}px)`;
 
-/* 🧮 Calculadora */
-.calculator-container {
-  width: 100%;
-  max-width: 420px;
-  padding: 40px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  z-index: 10;
-}
-h2 {
-  font-size: 28px;
-  color: #00ffb3;
-  margin-bottom: 20px;
-  text-shadow: 0 0 8px #00ffb3, 0 0 18px rgba(0,255,179,0.4);
-  animation: glow 2s ease-in-out infinite alternate;
-}
-@keyframes glow {
-  from { text-shadow: 0 0 8px #00ffb3, 0 0 18px rgba(0,255,179,0.4); }
-  to { text-shadow: 0 0 20px #00ffaa, 0 0 40px rgba(0,255,179,0.6); }
-}
+    // Retraso corto para activar movimiento después de insertarse
+    requestAnimationFrame(() => {
+      meteor.style.transform = `translate(${dx}px, ${dy}px) rotate(720deg)`;
+      meteor.style.opacity = '0';
+    });
 
-input[type="number"] {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
-  padding: 12px 15px;
-  font-size: 16px;
-  color: #fff;
-  transition: 0.3s;
-}
-input[type="number"]:focus {
-  border-color: #00ffb3;
-  box-shadow: 0 0 8px rgba(0,255,150,0.4);
-}
+    // Evento click = explosión y contador
+    meteor.addEventListener('click', (e) => {
+      const boom = document.createElement('div');
+      boom.classList.add('explosion');
+      boom.style.left = `${e.clientX - 30}px`;
+      boom.style.top = `${e.clientY - 30}px`;
+      document.body.appendChild(boom);
+      meteor.remove();
+      setTimeout(() => boom.remove(), 700);
+      contador++;
+      meteoroCount.textContent = contador;
+      successSound.play();
+    });
 
-.button-group {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-button {
-  flex: 1;
-  border: none;
-  border-radius: 10px;
-  padding: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-}
-#calcularBtn {
-  background: #00ffb3;
-  color: #111;
-}
-#calcularBtn:hover {
-  background: #00ffaa;
-  box-shadow: 0 0 10px #00ffaa;
-}
-#limpiarBtn {
-  border: 1px solid rgba(255,255,255,0.5);
-  color: #fff;
-  background: transparent;
-}
-#limpiarBtn:hover {
-  background: rgba(255,255,255,0.1);
-  box-shadow: 0 0 10px rgba(255,255,255,0.3);
-}
+    // Limpieza
+    setTimeout(() => meteor.remove(), duracion * 1000 + 2000);
+  }
 
-/* Panel ciencia */
-.info-panel {
-  position: fixed;
-  bottom: 15px;
-  right: 15px;
-  background: rgba(0,255,150,0.1);
-  border: 1px solid rgba(0,255,150,0.4);
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-size: 14px;
-  z-index: 999;
-  color: #00ffb3;
-  backdrop-filter: blur(8px);
-  cursor: pointer;
-}
-.info-panel span {
-  animation: parpadeo 2s infinite;
-}
-@keyframes parpadeo {
-  0%,100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
+  // 🌌 Más frecuencia: cada 2.5 s
+  setInterval(crearMeteoro, 2500);
 
-/* 🧮 Contador de meteoritos */
-.meteor-counter {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  font-size: 12px;
-  color: #00ffb3;
-  background: rgba(255,255,255,0.05);
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.2);
-  backdrop-filter: blur(4px);
-  z-index: 1000;
-}
+  // 💫 Destellos
+  setInterval(() => {
+    const flash = document.createElement('div');
+    flash.classList.add('flash');
+    flash.style.left = `${Math.random() * 100}%`;
+    flash.style.top = `${Math.random() * 100}%`;
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 2000);
+  }, 7000);
+});
+                         
