@@ -4,12 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let muertos = 0;
     const count = document.getElementById("count");
 
-    function resetScore() {
+    window.resetScore = () => {
         muertos = 0;
         count.textContent = 0;
-    }
-    window.resetScore = resetScore;
-
+    };
 
     // ---------------------- ESTRELLAS ----------------------
     const canvas = document.getElementById("cielo");
@@ -47,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
         requestAnimationFrame(dibujarEstrellas);
     }
     dibujarEstrellas();
-
 
     // ---------------------- METEORITOS ----------------------
     const colores = [
@@ -115,7 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setInterval(crearMeteoro, 1500);
 
-
     // ---------------------- CALCULADORA / HISTORIAL ----------------------
     const c1 = document.getElementById("c1");
     const c2 = document.getElementById("c2");
@@ -139,19 +135,32 @@ document.addEventListener("DOMContentLoaded", () => {
         let faltante = 3 - parcial;
         let necesario = faltante / 0.34;
 
-        let mensaje;
+        let box = document.createElement("div");
+        box.classList.add("logBox");
 
         if (necesario <= 0) {
-            mensaje = `✔ Con Corte1=${v1} y Corte2=${v2}: YA apruebas.`;
+            box.classList.add("logAprobado");
+            box.innerHTML = `
+                <strong>🟩 APROBADO</strong><br>
+                Con <b>${v1}</b> y <b>${v2}</b> ya apruebas la materia.  
+                No necesitas Corte 3.
+            `;
         } else if (necesario > 5) {
-            mensaje = `✘ Con Corte1=${v1} y Corte2=${v2}: ni con 5 alcanzas.`;
+            box.classList.add("logNoAlcanza");
+            box.innerHTML = `
+                <strong>🟥 NO ALCANZAS</strong><br>
+                Con <b>${v1}</b> y <b>${v2}</b> ni con 5 alcanzas 😢.
+            `;
         } else {
-            mensaje = `➤ Con Corte1=${v1} y Corte2=${v2}: necesitas ${necesario.toFixed(2)} en Corte3.`;
+            box.classList.add("logRequiere");
+            box.innerHTML = `
+                <strong>🟦 REQUERIMIENTO</strong><br>
+                Con <b>${v1}</b> y <b>${v2}</b> necesitas  
+                <b>${necesario.toFixed(2)}</b> en Corte 3.
+            `;
         }
 
-        let p = document.createElement("p");
-        p.textContent = mensaje;
-        historial.appendChild(p);
+        historial.appendChild(box);
         historial.scrollTop = historial.scrollHeight;
     };
 
@@ -161,8 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
         historial.innerHTML = "";
     };
 
-
-    // ---------------------- PANEL DE CIENCIA ----------------------
+    // ---------------------- PANEL CUÁNTICO ----------------------
     const panel = document.getElementById("panel");
     const estado = document.getElementById("estado");
 
