@@ -98,8 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
         m.onclick = (e) => {
             const boom = document.createElement("div");
             boom.classList.add("explosion");
-            boom.style.left = `${e.clientX - 30}px`;
-            boom.style.top = `${e.clientY - 30}px`;
+            boom.style.left = `${e.clientX - 45}px`;
+            boom.style.top = `${e.clientY - 45}px`;
             document.body.appendChild(boom);
             setTimeout(() => boom.remove(), 700);
 
@@ -116,17 +116,22 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(crearMeteoro, 1500);
 
 
-    // ---------------------- CALCULADORA ----------------------
+    // ---------------------- CALCULADORA / HISTORIAL ----------------------
     const c1 = document.getElementById("c1");
     const c2 = document.getElementById("c2");
-    const res = document.getElementById("res");
+    const historial = document.getElementById("historial");
 
     calcular.onclick = () => {
         let v1 = parseFloat(c1.value);
         let v2 = parseFloat(c2.value);
 
+        if (v1 > 5 || v2 > 5) {
+            alert("⚠️ Las notas NO pueden ser mayores a 5");
+            return;
+        }
+
         if (isNaN(v1) || isNaN(v2)) {
-            res.innerHTML = "⚠️ Ingresa ambos valores.";
+            alert("⚠️ Ingresa ambas notas");
             return;
         }
 
@@ -134,19 +139,26 @@ document.addEventListener("DOMContentLoaded", () => {
         let faltante = 3 - parcial;
         let necesario = faltante / 0.34;
 
+        let mensaje;
+
         if (necesario <= 0) {
-            res.innerHTML = "✅ Ya apruebas con lo que tienes.";
+            mensaje = `✔ Con Corte1=${v1} y Corte2=${v2}: YA apruebas.`;
         } else if (necesario > 5) {
-            res.innerHTML = "❌ Ni con 5 alcanzas.";
+            mensaje = `✘ Con Corte1=${v1} y Corte2=${v2}: ni con 5 alcanzas.`;
         } else {
-            res.innerHTML = `📘 Necesitas <b>${necesario.toFixed(2)}</b> en el tercer corte.`;
+            mensaje = `➤ Con Corte1=${v1} y Corte2=${v2}: necesitas ${necesario.toFixed(2)} en Corte3.`;
         }
+
+        let p = document.createElement("p");
+        p.textContent = mensaje;
+        historial.appendChild(p);
+        historial.scrollTop = historial.scrollHeight;
     };
 
     limpiar.onclick = () => {
         c1.value = "";
         c2.value = "";
-        res.innerHTML = "";
+        historial.innerHTML = "";
     };
 
 
