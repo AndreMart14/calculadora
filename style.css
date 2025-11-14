@@ -1,208 +1,546 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* --- 1. ESTILOS BASE, FUENTE Y PALETA (CREMA Y AZUL) --- */
+:root {
+    --color-bg: #fcf8f0;         /* Fondo principal (Crema Cálido) */
+    --color-bg-alt: #eaf4f4;     /* Fondo de sección (Azul extra pálido) */
+    --color-primary: #5f7a8f;     /* Azul principal (Más oscuro, mejor contraste) */
+    --color-primary-light: #90b3cc; /* Azul pastel (Claro) */
+    --color-accent: #a5cc82;       /* Acento (Verde Menta Suave, ajustado para contraste) */
+    --color-text: #2c2c2c;        /* Texto más oscuro para legibilidad */
+    --color-white: #ffffff;
+    --shadow: 0 4px 12px rgba(0,0,0,0.06);
+    --shadow-hover: 0 8px 18px rgba(0,0,0,0.12);
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  overflow: hidden;
-  color: #fff;
-  background: radial-gradient(circle at center, #0a0a0a, #141414, #1f1f1f);
-  position: relative;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
 }
 
-/* 🌌 Cielo estrellado */
-#cieloEstrellado {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-  background: radial-gradient(circle at center, #050505, #0a0a0a, #111);
+header {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    color: var(--color-white);
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: var(--shadow-hover);
+    margin-bottom: 20px;
+    cursor: pointer;
+    overflow: hidden; /* Necesario para los efectos de confeti */
 }
 
-/* ✨ Destellos */
-.flash {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  background: radial-gradient(circle, rgba(255,255,255,0.9), transparent 70%);
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 1;
-  animation: destello 2s ease-out forwards;
+.header-content {
+    max-width: 900px;
+    margin: 0 auto;
 }
 
-@keyframes destello {
-  0% { opacity: 0; transform: scale(0.2); }
-  50% { opacity: 0.6; transform: scale(1.3); }
-  100% { opacity: 0; transform: scale(2); }
+.main-title {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+    font-weight: 700;
+    transition: opacity 0.5s ease-in-out;
 }
 
-/* 🌠 Meteoros */
-.meteor {
-  position: fixed;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  box-shadow: 0 0 25px 8px rgba(255,255,255,0.6);
-  z-index: 50;
-  cursor: pointer;
-  pointer-events: auto;
+/* --- 2. LAYOUT Y SECCIONES GENERALES --- */
+
+.content-section {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: var(--color-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
 }
 
-/* 💥 Explosión */
-.explosion {
-  position: fixed;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(0,255,200,0.3), transparent);
-  pointer-events: none;
-  animation: explotar 0.7s ease-out forwards;
-  z-index: 60;
+.content-section h2 {
+    color: var(--color-primary);
+    border-bottom: 3px solid var(--color-accent);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.8em;
 }
 
-@keyframes explotar {
-  0% { transform: scale(0.2); opacity: 1; }
-  100% { transform: scale(2); opacity: 0; }
+/* --- 3. SECCIÓN DE VOCABULARIO Y TABS --- */
+
+.tab-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--color-bg-alt);
+    padding-bottom: 15px;
 }
 
-/* 🌌 Estela */
-.meteor::after {
-  content: "";
-  position: absolute;
-  bottom: 50%;
-  left: -60px;
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.8), transparent);
-  border-radius: 50%;
-  opacity: 0.8;
-  filter: blur(4px);
-  animation: tail-fade 1s infinite ease-in-out;
+.tab-button {
+    background-color: var(--color-bg-alt);
+    color: var(--color-text);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
 }
 
-@keyframes tail-fade {
-  0% { opacity: 0.8; transform: scaleX(1); }
-  50% { opacity: 0.3; transform: scaleX(1.3); }
-  100% { opacity: 0.8; transform: scaleX(1); }
+.tab-button:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-white);
 }
 
-/* 🌈 Cometa */
-.cometa::after {
-  width: 160px;
-  height: 6px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(0,255,255,0.7), rgba(255,0,255,0.5), transparent);
-  filter: blur(6px);
-  animation: cometa-fade 1.5s infinite ease-in-out;
+.tab-button.active {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
 }
 
-@keyframes cometa-fade {
-  0% { opacity: 0.9; transform: scaleX(1); }
-  50% { opacity: 0.5; transform: scaleX(1.5); }
-  100% { opacity: 0.9; transform: scaleX(1); }
+.vocabulary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
 }
 
-/* 🧮 Calculadora */
-.calculator-container {
-  width: 100%;
-  max-width: 420px;
-  padding: 40px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  z-index: 10;
+.vocab-card {
+    background-color: var(--color-bg-alt);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    transition: opacity 0.5s ease-in-out, transform 0.3s;
 }
 
-h2 {
-  font-size: 28px;
-  color: #00ffb3;
-  margin-bottom: 20px;
-  text-shadow: 0 0 8px #00ffb3, 0 0 18px rgba(0,255,179,0.4);
+.vocab-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
 }
 
-/* Inputs y botones */
-input[type="number"] {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
-  padding: 12px 15px;
-  font-size: 16px;
-  color: #fff;
-  transition: 0.3s;
+.vocab-card h3 {
+    color: var(--color-primary);
+    font-size: 1.1em;
+    margin-top: 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--color-primary-light);
+    padding-bottom: 5px;
 }
 
-input[type="number"]:focus {
-  border-color: #00ffb3;
-  box-shadow: 0 0 8px rgba(0,255,150,0.4);
+.vocab-card table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
 }
 
-.button-group {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
+.vocab-card th {
+    background-color: var(--color-primary-light);
+    color: var(--color-white);
+    padding: 5px;
+    text-align: left;
 }
 
-button {
-  flex: 1;
-  border: none;
-  border-radius: 10px;
-  padding: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
+.vocab-card td {
+    padding: 5px;
+    border-bottom: 1px dashed #ccc;
 }
 
-#calcularBtn {
-  background: #00ffb3;
-  color: #111;
+.vocab-card tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
-#limpiarBtn {
-  border: 1px solid rgba(255,255,255,0.5);
-  color: #fff;
-  background: transparent;
+.full-width {
+    grid-column: 1 / -1;
 }
 
-/* Panel de información */
-.info-panel {
-  position: fixed;
-  bottom: 15px;
-  right: 15px;
-  background: rgba(0,255,150,0.1);
-  border: 1px solid rgba(0,255,150,0.4);
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-size: 14px;
-  z-index: 999;
-  color: #00ffb3;
-  backdrop-filter: blur(8px);
+.card-hidden {
+    display: none;
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
 }
 
-/* Contador */
-.meteor-counter {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  font-size: 12px;
-  color: #00ffb3;
-  background: rgba(255,255,255,0.05);
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.2);
-  backdrop-filter: blur(4px);
-  z-index: 1000;
+/* --- 4. SECCIÓN DE ENLACES EXTERNOS --- */
+
+.links-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.resource-card {
+    display: block;
+    width: calc(50% - 10px);
+    max-width: 380px;
+    text-decoration: none;
+    color: var(--color-text);
+    background-color: var(--color-bg-alt);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.resource-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.resource-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+.resource-card h3 {
+    color: var(--color-primary);
+    padding: 10px 15px 5px;
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.resource-card p {
+    padding: 0 15px 15px;
+    margin: 0;
+    font-size: 0.9em;
+}
+
+/* --- 5. ACTIVIDADES INTERACTIVAS (DRAG & DROP Y MATCH) --- */
+
+.activity-card {
+    background-color: var(--color-bg-alt);
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.activity-card h4 {
+    color: var(--color-accent);
+    font-size: 1.4em;
+    margin-top: 0;
+}
+
+.word-bank {
+    background-color: var(--color-white);
+    padding: 10px;
+    border-radius: 5px;
+    min-height: 60px;
+    margin: 15px 0;
+    border: 2px dashed var(--color-primary-light);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.draggable-word, .dropped {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: grab;
+    font-weight: 600;
+    transition: background-color 0.2s, opacity 0.2s;
+    user-select: none;
+}
+
+.draggable-word:hover {
+    background-color: #8cc460; /* Tono más oscuro al hacer hover */
+}
+
+.draggable-word.hide {
+    opacity: 0.5; /* Difuminado */
+    cursor: grabbing;
+}
+
+.lyrics-container {
+    background-color: var(--color-white);
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1.1em;
+    line-height: 2.5;
+}
+
+.drop-zone {
+    display: inline-block;
+    min-width: 80px;
+    min-height: 1.2em;
+    border-bottom: 2px solid var(--color-primary);
+    text-align: center;
+    padding: 0 5px;
+    margin: 0 3px;
+    position: relative;
+    vertical-align: middle;
+    cursor: pointer; /* Indica que se puede hacer clic para devolver */
+}
+
+.drop-zone.drag-over {
+    background-color: var(--color-primary-light);
+}
+
+.drop-zone .dropped {
+    cursor: pointer;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 2px 8px;
+    border-radius: 4px;
+    line-height: 1;
+    display: inline-block;
+}
+
+.drop-zone.correct {
+    border-color: var(--color-accent);
+    background-color: rgba(165, 204, 130, 0.2);
+}
+
+.drop-zone.incorrect {
+    border-color: #d9534f;
+    background-color: rgba(217, 83, 79, 0.2);
+}
+
+.check-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.check-button:hover {
+    background-color: #4a6478; /* Un poco más oscuro */
+}
+
+.result-message {
+    margin-top: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Match Game Styles */
+.match-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.match-card {
+    background-color: var(--color-primary-light);
+    color: var(--color-white);
+    padding: 15px 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    box-shadow: var(--shadow);
+    user-select: none;
+}
+
+.match-card:hover:not(.selected):not(.matched) {
+    background-color: var(--color-primary);
+}
+
+.match-card.selected {
+    background-color: var(--color-accent);
+    transform: scale(1.05);
+    box-shadow: 0 0 0 3px var(--color-accent);
+}
+
+.match-card.matched {
+    background-color: #4CAF50; /* Green */
+    cursor: default;
+    box-shadow: none;
+}
+
+.match-card.mismatch {
+    background-color: #F44336; /* Red */
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+/* --- 6. SECCIÓN DE VIDEOS --- */
+
+.video-grid-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.video-item-container {
+    position: relative;
+    padding-bottom: 56.25%; /* Relación de aspecto 16:9 para el iframe */
+    height: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-hover);
+}
+
+.video-2x2-item iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.video-title-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: var(--color-white);
+    padding: 5px 10px;
+    margin: 0;
+    font-size: 0.9em;
+    text-align: center;
+    z-index: 10;
+}
+
+/* --- 7. FOOTER Y MISCELÁNEA (Confetti y Modal) --- */
+
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-size: 0.9em;
+}
+
+/* Confetti Effect */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+    animation: fall 1s forwards;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+@keyframes fall {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+    100% { 
+        transform: translate(var(--x), var(--y)) rotate(720deg); 
+        opacity: 0; 
+    }
+}
+
+/* Firework/Modal CSS */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.modal-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transform: scale(0.8);
+    transition: transform 0.3s;
+}
+
+.modal-overlay.show .modal-content {
+    transform: scale(1);
+}
+
+#close-modal-btn {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    margin-top: 20px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+#close-modal-btn:hover {
+    background-color: #8cc460;
+}
+
+/* --- ESTILOS ESPECÍFICOS PARA REPRODUCTOR DE AUDIO NATIVO --- */
+
+.audio-reproductor-actividad {
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.audio-reproductor-actividad audio {
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: var(--shadow);
+}
+
+
+/* --- 8. DISEÑO RESPONSIVE (MÓVIL) --- */
+@media (max-width: 768px) {
+    header {
+        padding: 20px 10px;
+    }
+
+    .main-title {
+        font-size: 1.8em;
+    }
+
+    .content-section {
+        margin: 20px 10px;
+        padding: 15px;
+    }
+
+    .video-grid-2x2 {
+        grid-template-columns: 1fr;
+    }
+
+    .resource-card {
+        width: 100%;
+        max-width: none;
+    }
+
+    .match-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .vocabulary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Se eliminaron los estilos de ChatBot */
 }
