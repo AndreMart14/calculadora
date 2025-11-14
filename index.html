@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberpunk Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- FONDO -->
+    <canvas id="cielo"></canvas>
+
+    <!-- MENÚ LATERAL -->
+    <div id="menu">
+        <h3>⚡ Menú</h3>
+        <button class="btnMenu" onclick="scrollToCalc()">Calculadora</button>
+        <button class="btnMenu" onclick="togglePanel()">Panel datos</button>
+        <button class="btnMenu" onclick="resetScore()">Reiniciar Puntuación</button>
+    </div>
+
+    <!-- CONTADOR -->
+    <div id="contador">
+        ⚔️ Meteoros destruidos: <span id="count">0</span>
+    </div>
+
+    <!-- PANEL DE CIENCIA -->
+    <div id="panel">
+        <b>¿Se unificó la física cuántica con la relatividad?</b><br>
+        <span id="estado">Aún no... 😅</span>
+    </div>
+
+    <!-- CALCULADORA -->
+    <div id="calc">
+        <h2>📘 Calculadora Cyberpunk</h2>
+
+        <label>Corte 1</label>
+        <input id="c1" type="number" step="0.01" min="0" max="5">
+
+        <label>Corte 2</label>
+        <input id="c2" type="number" step="0.01" min="0" max="5">
+
+        <button id="calcular">Calcular</button>
+        <button id="limpiar">Limpiar</button>
+
+        <div id="res"></div>
+    </div>
+
+<script src="script.js"></script>
+</body>
+</html>
